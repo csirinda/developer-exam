@@ -1,0 +1,104 @@
+Table product {
+  product_id integer [primary key]
+  product_name varchar
+  product_desc varchar
+  price decimal(10,2)
+  category_id varchar
+  quantity_in_stock integer
+  discount decimal(5,2)
+}
+
+Table stock_transaction {
+  transaction_id integer [primary key]
+  customer_id integer
+  product_id integer
+  order_id integer
+  transaction_date timestamp
+  quantity integer
+}
+
+Table category {
+  category_id varchar [primary key]
+  category_name varchar  
+}
+
+Table customer {
+  customer_id integer [primary key]
+  customer_name varchar
+  email varchar  
+  phone integer
+}
+
+Table address {
+  address_id integer [primary key]
+  customer_id integer    
+  address_line varchar
+  city varchar
+  postal varchar
+  country varchar
+}
+
+Table cart {
+  cart_id integer [primary key]
+  customer_id integer
+  last_updated timestamp  
+}
+
+Table cart_item {
+  cart_item_id integer [primary key]
+  cart_id integer
+  product_id integer
+  quantity_in_cart integer 
+}
+
+Table order {
+  order_id integer [primary key]
+  order_date timestamp
+  customer_id integer
+  order_status varchar
+  total_amount float
+  address_id integer
+}
+
+Table order_item {
+  order_item_id integer [primary key]
+  order_id integer
+  product_id integer
+  quantity integer
+  unit_price float
+}
+
+Table shipment {
+  shipment_id integer [primary key]
+  order_id integer
+  quantity integer
+  shipment_date timestamp
+  order_status varchar
+  tracking_number varchar
+}
+
+Ref : customer.customer_id < order.customer_id //หนึ่งลูกค้าสามารถมีได้หลายคำสั่งซื้อ
+
+Ref : customer.customer_id < address.customer_id //หนึ่งลูกค้าสามารถมีได้หลายที่อยู่
+
+Ref :  order.order_id < order_item.order_id //หนึ่งคำสั่งซื้อมีได้หลายรายการสินค้า
+
+Ref :  product.product_id < order_item.product_id   //หนึ่งสินค้าสามารถถูกสั่งซื้อได้หลายครั้งในคำสั่งซื้อที่แตกต่างกัน
+
+Ref :  product.category_id > category.category_id //หลายสินค้าอยู่ในหนึ่งหมวดหมู่
+
+Ref :  order.order_id - shipment.order_id //หนึ่งคำสั่งซื้อมีหนึ่งการจัดส่ง
+
+Ref :  stock_transaction.product_id > product.product_id //หลายธุรกรรมสามารถเกิดขึ้นกับหนึ่งสินค้า
+
+Ref : cart.customer_id - customer.customer_id //ลูกค้าหนึ่งคนมีตะกร้าสินค้าได้หนึ่งตะกร้า
+
+Ref : cart.cart_id < cart_item.cart_id //หนึ่งตะกร้ามีได้หลายรายการสินค้า
+
+Ref : cart_item.product_id - product.product_id //หนึ่งรายการในตะกร้าอ้างอิงถึงสินค้าหนึ่งชิ้น
+
+Ref : customer.customer_id < stock_transaction.customer_id //หนึ่งลูกค้าสามารถทำให้เกิดการตัดสต็อคหลายครั้ง
+
+Ref :  address.address_id < order.address_id //หนึ่งที่อยู่ใช้จัดส่งได้หลายคำสั่งซื้อ
+
+Ref :  order.order_id < stock_transaction.order_id //1 คำสั่งซื้อ สามารถทำให้เกิดการตัดสต็อคหลายครั้ง
